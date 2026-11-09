@@ -1,39 +1,93 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql2");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req,res)=>{
+const db = mysql.createConnection({
 
-res.send("MOSA Backend Working");
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+
+});
+
+db.connect((err)=>{
+
+    if(err){
+
+        console.log(err);
+        return;
+
+    }
+
+    console.log("✅ Railway Connected");
+
+});
+
+app.get("/",(req,res)=>{
+
+    res.send("MOSA Backend Working");
 
 });
 
 app.post("/register",(req,res)=>{
 
-const {
+    const {
+        fullName,
+        email,
+        password
+    } = req.body;
 
-fullName,
-email,
-password
+    db.query(
 
-}=req.body;
+        `
+        INSERT INTO users
+        (
+            full_name,
+            email,
+            password_hash
+        )
+        VALUES
+        (?,?,?)
+        `,
 
-console.log(
-fullName,
-email,
-password
-);
+        [
+            fullName,
+            email,
+            password
+        ],
 
-res.json({
+        (err)=>{
 
-message:
-"Registration Successful"
+            if(err){
 
-});
+                console.log(err);
+
+                return res.status(500).json({
+
+                    message:
+                    "Registration Failed"
+
+                });
+
+            }
+
+            return res.json({
+
+                message:
+                "Registration Successful"
+
+            });
+
+        }
+
+    );
 
 });
 
@@ -42,8 +96,8 @@ process.env.PORT || 5000;
 
 app.listen(PORT,()=>{
 
-console.log(
-`MOSA Running On Port ${PORT}`
-);
+    console.log(
+        `MOSA Running On Port ${PORT}`
+    );
 
 });
