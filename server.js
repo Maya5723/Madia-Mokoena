@@ -1,20 +1,49 @@
-const express =require ("express");
+const express = require("express");
+const cors = require("cors");
+
 const app = express();
-app.get("/", (req, res)=>{
-	res.send("MOSA Backend Working");
+
+app.use(cors());
+app.use(express.json());
+
+app.get("/", (req,res)=>{
+
+res.send("MOSA Backend Working");
+
 });
+
 app.post("/register",(req,res)=>{
-	const{ 
-	fulllName,
-	email,
-	password}=req.body;
-	console.log({fulllName,
-	email,
-	password});
-	res.json({
-	message: "Restrarion Successfil"});
+
+const {
+
+fullName,
+email,
+password
+
+}=req.body;
+
+console.log(
+fullName,
+email,
+password
+);
+
+res.json({
+
+message:
+"Registration Successful"
+
 });
-const port=process.env.port||5000;
-app.listen(port,()=>{
-	console.log('MOSA Running On Port ${PORT}');
+
+});
+
+const PORT =
+process.env.PORT || 5000;
+
+app.listen(PORT,()=>{
+
+console.log(
+`MOSA Running On Port ${PORT}`
+);
+
 });
